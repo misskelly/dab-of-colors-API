@@ -1,0 +1,35 @@
+{
+  "name": "palette-picker-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/misskelly/palette-picker-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/misskelly/palette-picker-api/issues"
+  },
+  "homepage": "https://github.com/misskelly/palette-picker-api#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "knex": "^0.16.5",
+    "pg": "^7.8.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "babel-jest": "^24.5.0",
+    "express": "^4.15.2",
+    "jest": "^24.8.0",
+    "nodemon": "^1.19.1",
+    "supertest": "^4.0.0"
+  }
+}

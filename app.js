@@ -6,9 +6,30 @@ const environment = process.env.NOTE_ENV || 'test';
 // const configuration = require('./knexfile')[environment];
 // const database = require('knex')(configuration);
 
+app.use(bodyParser.json())
 
 app.get('/', (request, response) => {
-  response.send('We\'re going to test all the routes!');
+  response.send('Let\'s get some random color palettes!');
 });
+
+// GET
+// /api/v1/projects
+
+
+// POST
+
+
+
+// PUT
+
+
+
+// PATCH
+
+
+
+// DELETE
+
+
 
 module.exports = app;

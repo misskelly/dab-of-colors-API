@@ -6,9 +6,15 @@ const environment = process.env.NOTE_ENV || 'test';
 // const database = require('knex')(configuration);
 // 
 
-describe('Dummy', () => {
-  it('should return true', () => {
-    expect(true).toEqual(true);
+
+
+describe('Server', () => {
+  describe('init', () => {
+    it('should return a 200 status', async () => {
+      const res = await request(app).get('/');
+      expect(res.status).toBe(200);
+    });
   });
+
 });
 

@@ -12,7 +12,7 @@ let colorSeed = [
         colors: [ '#32213A', '#383B53', '#66717E', '#D4D6B9', '#D1CAA1' ]
       }
     ]
-  },
+  }
 ]
 
 module.exports = colorSeed;

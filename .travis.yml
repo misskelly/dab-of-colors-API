@@ -1,3 +1,13 @@
 language: node_js
 node_js: 
   - "node"
+services:
+  - postgresql
+before_script:
+  - psql -c 'CREATE DATABASE projects_test;' -U postgres
+  
+
+  # add postgres
+  # create database
+  # migrate/seed DB
+  # deploy to heroku

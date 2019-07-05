@@ -1,0 +1,6 @@
+{
+  "rules": {
+    "comma-dangle": ["error", "never"],
+    "max-lines-per-function": ["error", 30]
+  }
+}

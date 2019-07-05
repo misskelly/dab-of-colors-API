@@ -1,17 +1,16 @@
-import request from 'supertest';
-import app from './app';
-
+const request = require('supertest');
+const app = require('./app');
 const environment = process.env.NOTE_ENV || 'test';
-// const configuration = require('./knexfile')[environment];
-// const database = require('knex')(configuration);
-// 
+const configuration = require('./knexfile')[environment];
+const database = require('knex')(configuration);
 
 
 
 describe('Server', () => {
-  // beforeEach(async () => {
-  //   await database.seed.run()
-  //   })
+  beforeEach(async () => {
+    await database.seed.run()
+  })
+
   describe('init', () => {
     it('should return a 200 status', async () => {
       const res = await request(app).get('/');
@@ -22,7 +21,17 @@ describe('Server', () => {
   describe('GET /projects', () => {
     
     it('should return all projects', async () => {
-      
+      //SETUP
+      const expectedProjects = await database('projects').select();
+      const expectedProject = expectedProjects[0].name;
+      //EXECUTION
+      const res = await request(app).get('/api/v1/projects');
+      const project = res.body[0].name;
+
+      //EXPECTATION
+      expect(res.status).toBe(200);
+      expect(expectedProject).toEqual(project);
+
     });
     
     it('should return the project with the specified id', async () => {

@@ -2,9 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 
-const environment = process.env.NOTE_ENV || 'test';
-// const configuration = require('./knexfile')[environment];
-// const database = require('knex')(configuration);
+const environment = process.env.NOTE_ENV || 'development';
+const configuration = require('./knexfile')[environment];
+const database = require('knex')(configuration);
 
 app.use(bodyParser.json())
 
@@ -13,7 +13,12 @@ app.get('/', (request, response) => {
 });
 
 // GET
-// /api/v1/projects
+
+app.get('/api/v1/projects', async (req, res) => {
+  const projects = await database('projects').select()
+  return res.status(200).json(projects)
+})
+ 
 // /api/v1/projects/:id
 
 

@@ -1,4 +1,4 @@
-const seedData = require('../../seedData/seedData');
+const projects = require('../../../mockData/mockData');
 
 const createProjects = (knex, project) => {
   return knex('projects').insert({
@@ -37,7 +37,7 @@ exports.seed = (knex, Promise) => {
 
       let projectPromises = [];
 
-      seedData.forEach(project => {
+      projects.forEach(project => {
         projectPromises.push(createProjects(knex, project));
       });
 

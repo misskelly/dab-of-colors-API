@@ -5,7 +5,12 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "jest --forceExit"
+    "test": "jest --forceExit",
+    "test:watch": "jest --watchAll",
+    "lint": "eslint src/**/*.js --ignore-pattern node_modules/ --ignore-pattern src/serviceWorker.js"
+  },
+  "eslintConfig": {
+    "extends": "airbnb"
   },
   "repository": {
     "type": "git",
@@ -27,6 +32,7 @@
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
     "babel-jest": "^24.5.0",
+    "eslint-config-airbnb": "^17.1.1",
     "express": "^4.15.2",
     "jest": "^24.8.0",
     "nodemon": "^1.19.1",

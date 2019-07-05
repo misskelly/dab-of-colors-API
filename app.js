@@ -14,21 +14,21 @@ app.get('/', (request, response) => {
 
 // GET
 // /api/v1/projects
+// /api/v1/projects/:id
 
 
 // POST
+// /api/v1/projects
 
 
 
 // PUT
-
-
-
-// PATCH
+// /api/v1/projects/:id
 
 
 
 // DELETE
+// /api/v1/projects/:id
 
 
 

@@ -8,9 +8,9 @@ const database = require('knex')(configuration);
 
 describe('Server', () => {
   
-  // beforeEach(async () => {
-  //   await database.seed.run()
-  // })
+  beforeEach(async () => {
+    await database.seed.run()
+  })
 
   describe('init', () => {
     it('should return a 200 status', async () => {

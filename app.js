@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const environment = process.env.NOTE_ENV || 'development';
+const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 const cors = require('cors')
@@ -25,7 +25,21 @@ app.get('/api/v1/projects', async (req, res) => {
 });
 
 // /api/v1/projects/:id
-
+app.get('/api/v1/projects/:id', async (req, res) => {
+  try {
+    const projectId = req.params.id;
+    const project = await database('projects').where('id', projectId);
+    if (!project.length) {
+      res.status(404).json(`Sorry, no project found with id ${id}.`)
+    } 
+    res.status(200).json({
+      id: project[0].id,
+      name: project[0].name
+    });
+  } catch (error) {
+      res.status(500).json(`Oh no, something bad happened and I could not get that project: ${error}`);
+  }
+});
 
 // POST
 // /api/v1/projects

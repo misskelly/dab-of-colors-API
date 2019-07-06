@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('./app');
-const environment = process.env.NOTE_ENV || 'test';
+const environment = process.env.NODE_ENV || 'test';
 const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 
@@ -34,16 +34,27 @@ describe('Server', () => {
       expect(expectedProject).toEqual(project);
 
     });
+  });
+
+  describe('GET /projects/:id', () => {
     
     it('should return the project with the specified id', async () => {
+      const expectedProject = await database('projects').first();
+      const projectId = expectedProject.id;
+
+      const res = await request(app).get(`/api/v1/projects/${projectId}`);
+      const project = res.body;
+
+      expect(project.name).toEqual(expectedProject.name);
       
     });
     
     it('should return a status of 404 if there is no match to the query parameter', async () => {
-    
+
     });
-    
+
   });
+    
   
   describe('POST /projects', () => {
     

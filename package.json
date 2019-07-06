@@ -7,7 +7,9 @@
     "start": "node server.js",
     "test": "jest --forceExit",
     "test:watch": "jest --watchAll",
-    "lint": "eslint src/**/*.js --ignore-pattern node_modules/ --ignore-pattern src/serviceWorker.js"
+    "lint": "eslint src/**/*.js --ignore-pattern node_modules/ ",
+    "migrate-test": "knex migrate:latest --env=test",
+    "seed-test": "knex seed:run --env=test"
   },
   "eslintConfig": {
     "extends": "airbnb"

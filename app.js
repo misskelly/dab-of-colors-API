@@ -1,17 +1,54 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const app = express();
-const environment = process.env.NOTE_ENV || 'development';
+const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
+const cors = require('cors');
 
 app.use(express.json());
 
-
+app.use(bodyParser.json());
+app.use(cors());
 
 app.get('/', (request, response) => {
-  response.send('We\'re going to test all the routes!');
+  response.send('Let\'s get some random color palettes!');
 });
 
+// GET
+
+// all projects
+app.get('/api/v1/projects', async (req, res) => {
+  try {
+    const projects = await database('projects').select('id', 'name');
+    res.status(200).json(projects);
+  } catch (error) {
+    res.status(500).json(`Oh no, something bad happened and I could not get the projects: ${error}`);
+  }
+});
+
+
+// single project
+// /api/v1/projects/:id
+app.get('/api/v1/projects/:id', async (req, res) => {
+  try {
+    const projectId = req.params.id;
+    const project = await database('projects').where('id', projectId);
+    if (!project.length) {
+      res.status(404).json(`Sorry, no project found with id ${id}.`)
+    } 
+    res.status(200).json({
+      id: project[0].id,
+      name: project[0].name
+    });
+  } catch (error) {
+      res.status(500).json(`Oh no, something bad happened and I could not get that project: ${error}`);
+  }
+});
+
+
+// all palettes
+//'/api/v1/palettes'
 app.get('/api/v1/palettes', async (req, res) => {
   try {
     const { name } = req.query;
@@ -35,6 +72,9 @@ app.get('/api/v1/palettes', async (req, res) => {
   }
 });
 
+
+// single palette
+//'/api/v1/palettes/:id'
 app.get('/api/v1/palettes/:id', async (req, res) => {
   const id = parseInt(req.params.id);
   try {
@@ -47,6 +87,14 @@ app.get('/api/v1/palettes/:id', async (req, res) => {
   }
 });
 
+
+// POST
+
+// add new project
+// /api/v1/projects
+  
+// add new palette
+//'/api/v1/palettes'
 app.post('/api/v1/palettes', async (req, res) => {
   try {
     const palette = req.body;
@@ -57,20 +105,15 @@ app.post('/api/v1/palettes', async (req, res) => {
   }
 });
 
-app.delete('/api/v1/palettes/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const matchingPalettes = await database('palettes').where({ id });
-    if (!matchingPalettes.length) return res.sendStatus(404);
-    await database('palettes')
-      .where({ id })
-      .del();
-    return res.status(204).json('Palette Deleted');
-  } catch (error) {
-    return res.status(500).json({ error });
-  }
-});
 
+// PATCH
+
+// edit project
+// /api/v1/projects/:id
+
+
+// edit palette
+// '/api/v1/palettes/:id'
 app.patch('/api/v1/palettes/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -87,4 +130,28 @@ app.patch('/api/v1/palettes/:id', async (req, res) => {
   }
 });
 
+
+
+// DELETE
+
+// delete project and associated palette(s)
+// /api/v1/projects/:id
+
+
+// delete palette
+app.delete('/api/v1/palettes/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const matchingPalettes = await database('palettes').where({ id });
+    if (!matchingPalettes.length) return res.sendStatus(404);
+    await database('palettes')
+      .where({ id })
+      .del();
+    return res.status(204).json('Palette Deleted');
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+});
+
 module.exports = app;
+

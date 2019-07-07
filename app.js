@@ -4,7 +4,9 @@ const app = express();
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
-const cors = require('cors')
+const cors = require('cors');
+
+app.use(express.json());
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -15,6 +17,7 @@ app.get('/', (request, response) => {
 
 // GET
 
+// all projects
 app.get('/api/v1/projects', async (req, res) => {
   try {
     const projects = await database('projects').select('id', 'name');
@@ -24,6 +27,8 @@ app.get('/api/v1/projects', async (req, res) => {
   }
 });
 
+
+// single project
 // /api/v1/projects/:id
 app.get('/api/v1/projects/:id', async (req, res) => {
   const id = parseInt(req.params.id);
@@ -52,17 +57,113 @@ app.get('/api/v1/projects/:id', async (req, res) => {
     } catch (error) {
       res.status(500).json(`Oh no, something bad happened and I could not add that project: ${error}`);
   }
-})
+});
 
 
-// PUT
+// all palettes
+//'/api/v1/palettes'
+app.get('/api/v1/palettes', async (req, res) => {
+  try {
+    const { name } = req.query;
+    if (req.query.name) {
+      database('palettes')
+        .where('name', name)
+        .then(palette => {
+          if (palette) {
+            return res.status(200).json(palette);
+          } else {
+            return res.status(404).json('Palettes Not Found');
+          }
+        });
+    } else {
+      const palettes = await database('palettes').select();
+      if (!palettes.length) return res.status(404).json('Palettes Not Found');
+      res.status(200).json(palettes);
+    }
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
+
+// single palette
+//'/api/v1/palettes/:id'
+app.get('/api/v1/palettes/:id', async (req, res) => {
+  const id = parseInt(req.params.id);
+  try {
+    const foundPalette = await database('palettes').where({ id });
+    if (!foundPalette.length) return res.status(404).json('Palette Not Found');
+    res.status(200).json(foundPalette[0])
+
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
+
+// POST
+
+// add new project
+// /api/v1/projects
+  
+// add new palette
+//'/api/v1/palettes'
+app.post('/api/v1/palettes', async (req, res) => {
+  try {
+    const palette = req.body;
+    const [id] = await database('palettes').insert(palette, 'id');
+    res.status(201).json({ id });
+  } catch {
+    res.sendStatus(500);
+  }
+});
+
+// PATCH
+
+// edit project
 // /api/v1/projects/:id
+
+
+// edit palette
+// '/api/v1/palettes/:id'
+app.patch('/api/v1/palettes/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    if (!name) return res.status(422).json('Please provide a name.');
+    const matchingPalettes = await database('palettes').where({ id });
+    if (!matchingPalettes.length) return res.status(404).json('Palette not found.');
+    await database('palettes')
+      .where({ id })
+      .update({ name });
+    res.status(202).json('Name Updated Successfully');
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
 
 
 
 // DELETE
+
+// delete project and associated palette(s)
 // /api/v1/projects/:id
 
 
+// delete palette
+app.delete('/api/v1/palettes/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const matchingPalettes = await database('palettes').where({ id });
+    if (!matchingPalettes.length) return res.sendStatus(404);
+    await database('palettes')
+      .where({ id })
+      .del();
+    return res.status(204).json('Palette Deleted');
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+});
 
 module.exports = app;
+

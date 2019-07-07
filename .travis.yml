@@ -4,8 +4,11 @@ node_js:
 services:
   - postgresql
 before_script:
-  - psql -c 'CREATE DATABASE projects_test;' -U postgres
-  
+  - psql -c 'CREATE DATABASE palette_picker_test;' -U postgres
+  - npm run migrate-test
+  - npm run seed-test
+notifications:
+  email: false
 
   # add postgres
   # create database

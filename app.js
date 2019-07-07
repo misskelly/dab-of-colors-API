@@ -31,11 +31,11 @@ app.get('/api/v1/projects', async (req, res) => {
 // single project
 // /api/v1/projects/:id
 app.get('/api/v1/projects/:id', async (req, res) => {
+  const id = parseInt(req.params.id);
   try {
-    const projectId = req.params.id;
-    const project = await database('projects').where('id', projectId);
+    const project = await database('projects').where({ id });
     if (!project.length) {
-      res.status(404).json(`Sorry, no project found with id ${id}.`)
+      return res.status(404).json(`Sorry, no project found with id ${id}.`)
     } 
     res.status(200).json({
       id: project[0].id,
@@ -43,6 +43,19 @@ app.get('/api/v1/projects/:id', async (req, res) => {
     });
   } catch (error) {
       res.status(500).json(`Oh no, something bad happened and I could not get that project: ${error}`);
+    }
+  });
+  
+  // POST
+  // /api/v1/projects
+  app.post('/api/v1/projects', async (req, res) => {
+    try {
+      const project = req.body;
+      if (!project.name) return res.status(422).send({error: 'Expected format {  name: <String> }'});
+      const projectId = await database('projects').insert(project, 'id')
+      res.status(201).json({ id: projectId[0] })
+    } catch (error) {
+      res.status(500).json(`Oh no, something bad happened and I could not add that project: ${error}`);
   }
 });
 
@@ -104,7 +117,6 @@ app.post('/api/v1/palettes', async (req, res) => {
     res.sendStatus(500);
   }
 });
-
 
 // PATCH
 

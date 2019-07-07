@@ -60,14 +60,46 @@ describe('Server', () => {
   });
     
   
-  describe('POST /projects', () => {
+  describe('POST /api/v1/projects', () => {
     
-    it.skip('should post a new project', async () => {
+    it('should post a new project', async () => {
+      const projects = await request(app).get('/api/v1/projects');
+      expect(projects.body.length).toBe(2);
+      
+      const newProject = { name: 'Living Room' }
+      const response = await request(app).post('/api/v1/projects').send(newProject);
+      
+      const updatedProjects = await request(app).get('/api/v1/projects');
+      expect(updatedProjects.body.length).toBe(3);
+
+      const id = parseInt(response.body.id);
+      const expectedProject = await database('projects').first({ id });
+      const projectId = parseInt(expectedProject.id);
+
+      expect(id).toEqual(projectId);
       
     });
-
-    it.skip('should return a status of 422 if no name is provided in the request body', async () => {
+    
+    it('should return the project id with a status of 201 if the post is successful', async () => {
+      const newProject = { name: 'Kitchen' }
+      const response = await request(app).post('/api/v1/projects').send(newProject);
       
+      const id = parseInt(response.body.id);
+      const expectedProject = await database('projects').first({ id });
+      const projectId = parseInt(expectedProject.id);
+      
+      expect(id).toEqual(projectId);
+      expect(response.status).toBe(201);
+      
+    });
+    
+    it('should return a status of 422 if no name is provided in the request body', async () => {
+      const newProject = { name: ''};
+      
+      const response = await request(app).post('/api/v1/projects').send(newProject);
+
+      expect(response.status).toBe(422);
+
     });
 
   });

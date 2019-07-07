@@ -46,18 +46,6 @@ app.get('/api/v1/projects/:id', async (req, res) => {
     }
   });
   
-  // POST
-  // /api/v1/projects
-  app.post('/api/v1/projects', async (req, res) => {
-    try {
-      const project = req.body;
-      if (!project.name) return res.status(422).send({error: 'Expected format {  name: <String> }'});
-      const projectId = await database('projects').insert(project, 'id')
-      res.status(201).json({ id: projectId[0] })
-    } catch (error) {
-      res.status(500).json(`Oh no, something bad happened and I could not add that project: ${error}`);
-  }
-});
 
 
 // all palettes
@@ -102,9 +90,22 @@ app.get('/api/v1/palettes/:id', async (req, res) => {
 
 
 // POST
+  // /api/v1/projects
+  app.post('/api/v1/projects', async (req, res) => {
+    try {
+      const project = req.body;
+      if (!project.name) return res.status(422).send({
+        error: 'Expected format {  name: <String> }'
+      });
+      const projectId = await database('projects').insert(project, 'id')
+      res.status(201).json({
+        id: projectId[0]
+      })
+    } catch (error) {
+      res.status(500).json(`Oh no, something bad happened and I could not add that project: ${error}`);
+    }
+  });
 
-// add new project
-// /api/v1/projects
   
 // add new palette
 //'/api/v1/palettes'

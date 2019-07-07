@@ -18,6 +18,7 @@ app.get('/', (request, response) => {
 // GET
 
 // all projects
+// /api/v1/projects
 app.get('/api/v1/projects', async (req, res) => {
   try {
     const projects = await database('projects').select('id', 'name');
@@ -49,7 +50,7 @@ app.get('/api/v1/projects/:id', async (req, res) => {
 
 
 // all palettes
-//'/api/v1/palettes'
+// /api/v1/palettes
 app.get('/api/v1/palettes', async (req, res) => {
   try {
     const { name } = req.query;

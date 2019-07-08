@@ -215,6 +215,16 @@ describe('Server', () => {
         .send({ name: 'Updated Project' });
       expect(response.status).toEqual(202);
     });
+
+    it('should edit the name of a palette in the database', async () => {
+      const expected = await database('palettes').first();
+      expect(expected.name).not.toEqual('Updated Project');
+      await request(app)
+        .patch(`/api/v1/palettes/${expected.id}`)
+        .send({ name: 'Updated Project' });
+      const [result] = await database('palettes').where({ id: expected.id });
+      expect(result.name).toEqual('Updated Project');
+    });
   });
 });
 

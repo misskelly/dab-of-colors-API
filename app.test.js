@@ -249,6 +249,11 @@ describe('Server', () => {
       const postPalletes = await database('palettes').select();
       expect(postPalletes.length).toEqual(prePalettes.length - 1);
     });
+
+    it('should return 404 if no palette is found', async () => {
+      const response = await request(app).delete('/api/v1/palettes/0');
+      expect(response.status).toEqual(404);
+    });
   });
 });
 

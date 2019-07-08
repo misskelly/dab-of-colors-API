@@ -241,6 +241,14 @@ describe('Server', () => {
       const response = await request(app).delete(`/api/v1/palettes/${id}`);
       expect(response.status).toEqual(204);
     });
+
+    it('should remove a palette from the database', async () => {
+      const { id } = await database('palettes').first();
+      const prePalettes = await database('palettes').select();
+      await request(app).delete(`/api/v1/palettes/${id}`);
+      const postPalletes = await database('palettes').select();
+      expect(postPalletes.length).toEqual(prePalettes.length - 1);
+    });
   });
 });
 

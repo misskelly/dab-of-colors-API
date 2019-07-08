@@ -70,7 +70,7 @@ app.get('/api/v1/palettes', async (req, res) => {
       res.status(200).json(palettes);
     }
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json(`Oh no, something bad happened and I could not get all the palettes: ${error}`);
   }
 });
 
@@ -85,7 +85,7 @@ app.get('/api/v1/palettes/:id', async (req, res) => {
     res.status(200).json(foundPalette[0])
 
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json(`Oh no, something bad happened and I could not find that palette: ${error}`);
   }
 });
 
@@ -116,15 +116,29 @@ app.post('/api/v1/palettes', async (req, res) => {
     const [id] = await database('palettes').insert(palette, 'id');
     res.status(201).json({ id });
   } catch {
-    res.sendStatus(500);
+    res.sendStatus(500).json(`Oh no, something bad happened and I could not add that palette: ${error}`);
   }
 });
 
 // PATCH
 
 // edit project
-// /api/v1/projects/:id
-
+// '/api/v1/projects/:id'
+app.patch('/api/v1/projects/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    if (!name) return res.status(422).json('Please provide a name.');
+    const matchingProjects = await database('projects').where({ id });
+    if (!matchingProjects.length) return res.status(404).json(`Uh oh, could not find project with id: ${ id }.`);
+    await database('projects')
+      .where({ id })
+      .update({ name });
+    res.status(202).json('Successfully edited that project name');
+  } catch (error) {
+    res.status(500).json(`Oh no, something bad happened and I could not update that project: ${error}`);
+  }
+});
 
 // edit palette
 // '/api/v1/palettes/:id'
@@ -138,12 +152,12 @@ app.patch('/api/v1/palettes/:id', async (req, res) => {
     await database('palettes')
       .where({ id })
       .update({ name });
-    res.status(202).json('Name Updated Successfully');
+    res.status(202).json('Palette updated successfully');
   } catch (error) {
-    res.status(500).json({ error });
+    res.status(500).json(`Oh no, something bad happened and I could not get the projects: ${error}`);
   }
 });
-
+// we need to add the option to update colors
 
 
 // DELETE

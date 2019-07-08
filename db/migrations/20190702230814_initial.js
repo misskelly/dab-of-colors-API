@@ -17,7 +17,7 @@ exports.up = function(knex, Promise) {
       table.integer('project_id').unsigned()
       table.foreign('project_id')
         .references('projects.id');
-    }),
+    })
 
   ])
 };
@@ -26,6 +26,6 @@ exports.up = function(knex, Promise) {
 exports.down = function(knex, Promise) {
   return Promise.all([
     knex.schema.dropTable('projects'),
-    knex.schema.dropTable('palettes'),
+    knex.schema.dropTable('palettes')
   ]);
 };

@@ -127,7 +127,17 @@ describe('Server', () => {
   describe('DELETE /projects/:id', () => {
     
     it('should delete an existing project', async () => {
+      const originalProjects = await database('projects').select();     
+      const projectToDelete = await database('projects').first();     
+      
+      const response = await request(app).delete(`/api/v1/projects/${projectToDelete.id}`);
+      
+      const updatedProjects = await database('projects').select();
+      const updatedPalettes = await database('palettes').where('project_id', projectToDelete.id);
 
+      // expect(response.status).toBe(204);
+      expect(updatedProjects.length).toBe(originalProjects.length - 1);
+      expect(updatedPalettes.length).toBe(0);
     });
 
     it.skip('should return a status of 404 if the requested project does not exist', async () => {

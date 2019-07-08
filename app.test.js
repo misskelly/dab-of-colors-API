@@ -165,6 +165,14 @@ describe('Server', () => {
       const response = await request(app).get(`/api/v1/palettes/${id}`);
       expect(response.body.name).toEqual(expectedPalette.name);
     });
+    it('should return a status of 404 if palette id does not exist', async () => {
+      const id = 0;
+      const response = await request(app).get(`/api/v1/palettes/${id}`);
+      const status = response.status;
+      expect(status).toBe(404);
+    });
   });
+
+  
 });
 

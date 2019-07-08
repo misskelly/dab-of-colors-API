@@ -163,8 +163,25 @@ app.patch('/api/v1/palettes/:id', async (req, res) => {
 // DELETE
 
 // delete project and associated palette(s)
-// /api/v1/projects/:id
-
+app.delete('/api/v1/projects/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const projectToDelete = await database('projects').where('id', parseInt(id)).select();
+    
+    if (!projectToDelete.length) {
+      return res.status(404).json(`No project found with the id of ${projectId}.`);
+    }
+    await database('palettes')
+      .where('project_id', id)
+      .del();
+    await database('projects')
+      .where({ id })
+      .del();
+    res.status(202).json('Project successfully deleted')
+  } catch (error) {
+    res.status(500).json(`Oh no, something bad happened and I could not delete the project: ${error}`)
+  }
+})
 
 // delete palette
 app.delete('/api/v1/palettes/:id', async (req, res) => {

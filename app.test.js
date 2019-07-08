@@ -72,12 +72,6 @@ describe('Server', () => {
       const updatedProjects = await request(app).get('/api/v1/projects');
       expect(updatedProjects.body.length).toBe(3);
 
-      const id = parseInt(response.body.id);
-      const expectedProject = await database('projects').first({ id });
-      const projectId = parseInt(expectedProject.id);
-
-      expect(id).toEqual(projectId);
-      
     });
     
     it('should return the project id with a status of 201 if the post is successful', async () => {
@@ -106,24 +100,51 @@ describe('Server', () => {
 
   describe('PATCH /projects/:id', () => {
     
-    it.skip('should update an existing project', async () => {
-      
+    it('should update an existing project', async () => {
+
+      const existingProject = await database('projects').first();
+      const id = existingProject.id;
+      const updatedProject = { name: 'Updated Project' };
+
+      const response = await request(app).patch(`/api/v1/projects/${id}`).send(updatedProject);
+
+      const project = await database('projects').where('id', id);
+
+      expect(response.status).toBe(202);
+      expect(project[0].name).toEqual(updatedProject.name);
     });
 
-    it.skip('should return a status of 404 if the requested project does not exist', async () => {
-      
+    it('should return a status of 404 if the requested project does not exist', async () => {
+
+      const response = await request(app).get(`/api/v1/projects/0`);
+
+      expect(response.status).toBe(404);
+
     });
     
   });
   
   describe('DELETE /projects/:id', () => {
     
-    it.skip('should delete an existing project', async () => {
+    it('should delete an existing project', async () => {
+      const projectToDelete = await database('projects').first(); 
+          
+      const response = await request(app).delete(`/api/v1/projects/${projectToDelete.id}`);
       
+      const updatedProjects = await database('projects').select();
+      const updatedPalettes = await database('palettes').where('project_id', projectToDelete.id);
+      console.log(updatedProjects)
+      console.log(updatedPalettes)
+
+      expect(response.status).toBe(202);
+      expect(updatedProjects.length).toBe(1);
+      expect(updatedPalettes.length).toBe(0);
     });
 
-    it.skip('should return a status of 404 if the requested project does not exist', async () => {
-      
+    it('should return a status of 404 if the requested project does not exist', async () => {
+      const response = await request(app).get(`/api/v1/projects/0`);
+
+      expect(response.status).toBe(404)
     });
 
   });

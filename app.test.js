@@ -225,6 +225,15 @@ describe('Server', () => {
       const [result] = await database('palettes').where({ id: expected.id });
       expect(result.name).toEqual('Updated Project');
     });
+
+    it('should return 422 if the name param is not sent', async () => {
+      const { id } = await database('palettes').first();
+      const response = await request(app)
+        .patch(`/api/v1/palettes/${id}`)
+        .send();
+      expect(response.status).toEqual(422);
+    });
+  
   });
 });
 

@@ -188,6 +188,16 @@ describe('Server', () => {
         project_id
       };
     });
+
+    it('should return 201 and the palette id', async () => {
+      const response = await request(app)
+        .post('/api/v1/palettes')
+        .send(mockPalette);
+      expect(response.status).toEqual(201);
+      expect(response.body).toHaveProperty('id');
+    });
+
+    
   
   });
 });

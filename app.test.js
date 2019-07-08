@@ -233,7 +233,14 @@ describe('Server', () => {
         .send();
       expect(response.status).toEqual(422);
     });
-  
+  });
+
+  describe('DELETE /api/v1/palettes/:id', () => {
+    it('should return 204 if a palette matches the id', async () => {
+      const { id } = await database('palettes').first();
+      const response = await request(app).delete(`/api/v1/palettes/${id}`);
+      expect(response.status).toEqual(204);
+    });
   });
 });
 

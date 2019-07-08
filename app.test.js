@@ -149,5 +149,15 @@ describe('Server', () => {
 
   });
 
+  describe('GET /api/v1/palettes', () => {
+    it('should return 200 and all palettes', async () => {
+      const expected = await database('palettes').select();
+      const response = await request(app).get('/api/v1/palettes');
+      expect(response.status).toEqual(200);
+      expect(response.body.length).toEqual(expected.length);
+    });
+  });
+
+  
 });
 

@@ -115,7 +115,7 @@ app.post('/api/v1/palettes', async (req, res) => {
     const palette = req.body;
     const [id] = await database('palettes').insert(palette, 'id');
     res.status(201).json({ id });
-  } catch {
+  } catch (error) {
     res.sendStatus(500).json(`Oh no, something bad happened and I could not add that palette: ${error}`);
   }
 });

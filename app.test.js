@@ -197,8 +197,14 @@ describe('Server', () => {
       expect(response.body).toHaveProperty('id');
     });
 
-    
-  
+    it('should add a palette to the database', async () => {
+      const prePalettes = await database('palettes').select();
+      await request(app)
+        .post('/api/v1/palettes')
+        .send(mockPalette);
+      const postPalettes = await database('palettes').select();
+      expect(postPalettes.length).toEqual(prePalettes.length + 1);
+    });
   });
 });
 

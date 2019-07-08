@@ -206,5 +206,15 @@ describe('Server', () => {
       expect(postPalettes.length).toEqual(prePalettes.length + 1);
     });
   });
+
+  describe('PATCH /api/v1/palettes/:id', () => {
+    it('should return 202 if the correct params are sent', async () => {
+      const { id } = await database('palettes').first();
+      const response = await request(app)
+        .patch(`/api/v1/palettes/${id}`)
+        .send({ name: 'Updated Project' });
+      expect(response.status).toEqual(202);
+    });
+  });
 });
 

@@ -173,6 +173,22 @@ describe('Server', () => {
     });
   });
 
+  describe('POST /api/v1/palettes', () => {
+    let mockPalette;
+
+    beforeEach(async () => {
+      const { id: project_id } = await database('projects').first();
+      mockPalette = {
+        name: 'Mock Palette',
+        color_1: '#FFFFF',
+        color_2: '#FFFFF',
+        color_3: '#FFFFF',
+        color_4: '#FFFFF',
+        color_5: '#FFFFF',
+        project_id
+      };
+    });
   
+  });
 });
 

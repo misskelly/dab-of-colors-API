@@ -142,6 +142,7 @@ app.patch('/api/v1/projects/:id', async (req, res) => {
 
 // edit palette
 // '/api/v1/palettes/:id'
+// '/api/v1/palettes/:id'
 app.patch('/api/v1/palettes/:id', async (req, res) => {
   try {
     const { id } = req.params;

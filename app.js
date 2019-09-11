@@ -127,6 +127,32 @@ app.post('/api/v1/projects', async (req, res) => {
 app.post('/api/v1/palettes', async (req, res) => {
   try {
     const palette = req.body;
+    const required = [
+      'name',
+      'project_id',
+      'color_1',
+      'color_2',
+      'color_3',
+      'color_4',
+      'color_5',
+      'project_id'
+    ];
+    for (let param of required) {
+      if (!palette[param]) {
+        res.status(422).json({
+          error: `Expected format {
+        name: <String>,
+        color_1: <Valid Hex #>,
+        color_2: <Valid Hex #>,
+        color_3: <Valid Hex #>,
+        color_4: <Valid Hex #>,
+        color_5: <Valid Hex #>,
+        project_id: <Number>
+      }, Missing ${param}`
+        });
+        return;
+      }
+    }
     const [id] = await database('palettes').insert(palette, 'id');
     res.status(201).json({ id });
   } catch (error) {

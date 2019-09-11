@@ -6,13 +6,13 @@ const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 const cors = require('cors');
 
+require('dotenv').config();
 app.use(express.json());
-
-app.use(bodyParser.json());
 app.use(cors());
+app.use(bodyParser.json());
 
 app.get('/', (request, response) => {
-  response.send('Let\'s get some random color palettes!');
+  response.send("Let's get some random color palettes!");
 });
 
 // GET
@@ -24,10 +24,13 @@ app.get('/api/v1/projects', async (req, res) => {
     const projects = await database('projects').select('id', 'name');
     res.status(200).json(projects);
   } catch (error) {
-    res.status(500).json(`Oh no, something bad happened and I could not get the projects: ${error}`);
+    res
+      .status(500)
+      .json(
+        `Oh no, something bad happened and I could not get the projects: ${error}`
+      );
   }
 });
-
 
 // single project
 // /api/v1/projects/:id
@@ -36,18 +39,20 @@ app.get('/api/v1/projects/:id', async (req, res) => {
   try {
     const project = await database('projects').where({ id });
     if (!project.length) {
-      return res.status(404).json(`Sorry, no project found with id ${id}.`)
-    } 
+      return res.status(404).json(`Sorry, no project found with id ${id}.`);
+    }
     res.status(200).json({
       id: project[0].id,
       name: project[0].name
     });
   } catch (error) {
-      res.status(500).json(`Oh no, something bad happened and I could not get that project: ${error}`);
-    }
-  });
-  
-
+    res
+      .status(500)
+      .json(
+        `Oh no, something bad happened and I could not get that project: ${error}`
+      );
+  }
+});
 
 // all palettes
 // /api/v1/palettes
@@ -70,10 +75,13 @@ app.get('/api/v1/palettes', async (req, res) => {
       res.status(200).json(palettes);
     }
   } catch (error) {
-    res.status(500).json(`Oh no, something bad happened and I could not get all the palettes: ${error}`);
+    res
+      .status(500)
+      .json(
+        `Oh no, something bad happened and I could not get all the palettes: ${error}`
+      );
   }
 });
-
 
 // single palette
 //'/api/v1/palettes/:id'
@@ -82,32 +90,38 @@ app.get('/api/v1/palettes/:id', async (req, res) => {
   try {
     const foundPalette = await database('palettes').where({ id });
     if (!foundPalette.length) return res.status(404).json('Palette Not Found');
-    res.status(200).json(foundPalette[0])
-
+    res.status(200).json(foundPalette[0]);
   } catch (error) {
-    res.status(500).json(`Oh no, something bad happened and I could not find that palette: ${error}`);
+    res
+      .status(500)
+      .json(
+        `Oh no, something bad happened and I could not find that palette: ${error}`
+      );
   }
 });
 
-
 // POST
-  // /api/v1/projects
-  app.post('/api/v1/projects', async (req, res) => {
-    try {
-      const project = req.body;
-      if (!project.name) return res.status(422).send({
+// /api/v1/projects
+app.post('/api/v1/projects', async (req, res) => {
+  try {
+    const project = req.body;
+    if (!project.name)
+      return res.status(422).send({
         error: 'Expected format {  name: <String> }'
       });
-      const projectId = await database('projects').insert(project, 'id')
-      res.status(201).json({
-        id: projectId[0]
-      })
-    } catch (error) {
-      res.status(500).json(`Oh no, something bad happened and I could not add that project: ${error}`);
-    }
-  });
+    const projectId = await database('projects').insert(project, 'id');
+    res.status(201).json({
+      id: projectId[0]
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json(
+        `Oh no, something bad happened and I could not add that project: ${error}`
+      );
+  }
+});
 
-  
 // add new palette
 //'/api/v1/palettes'
 app.post('/api/v1/palettes', async (req, res) => {
@@ -116,7 +130,11 @@ app.post('/api/v1/palettes', async (req, res) => {
     const [id] = await database('palettes').insert(palette, 'id');
     res.status(201).json({ id });
   } catch (error) {
-    res.sendStatus(500).json(`Oh no, something bad happened and I could not add that palette: ${error}`);
+    res
+      .sendStatus(500)
+      .json(
+        `Oh no, something bad happened and I could not add that palette: ${error}`
+      );
   }
 });
 
@@ -130,13 +148,20 @@ app.patch('/api/v1/projects/:id', async (req, res) => {
     const { name } = req.body;
     if (!name) return res.status(422).json('Please provide a name.');
     const matchingProjects = await database('projects').where({ id });
-    if (!matchingProjects.length) return res.status(404).json(`Uh oh, could not find project with id: ${ id }.`);
+    if (!matchingProjects.length)
+      return res
+        .status(404)
+        .json(`Uh oh, could not find project with id: ${id}.`);
     await database('projects')
       .where({ id })
       .update({ name });
     res.status(202).json('Successfully edited that project name');
   } catch (error) {
-    res.status(500).json(`Oh no, something bad happened and I could not update that project: ${error}`);
+    res
+      .status(500)
+      .json(
+        `Oh no, something bad happened and I could not update that project: ${error}`
+      );
   }
 });
 
@@ -148,17 +173,21 @@ app.patch('/api/v1/palettes/:id', async (req, res) => {
     const { name } = req.body;
     if (!name) return res.status(422).json('Please provide a name.');
     const matchingPalettes = await database('palettes').where({ id });
-    if (!matchingPalettes.length) return res.status(404).json('Palette not found.');
+    if (!matchingPalettes.length)
+      return res.status(404).json('Palette not found.');
     await database('palettes')
       .where({ id })
       .update({ name });
     res.status(202).json('Palette updated successfully');
   } catch (error) {
-    res.status(500).json(`Oh no, something bad happened and I could not get the projects: ${error}`);
+    res
+      .status(500)
+      .json(
+        `Oh no, something bad happened and I could not get the projects: ${error}`
+      );
   }
 });
 // we need to add the option to update colors
-
 
 // DELETE
 
@@ -166,10 +195,14 @@ app.patch('/api/v1/palettes/:id', async (req, res) => {
 app.delete('/api/v1/projects/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const projectToDelete = await database('projects').where('id', parseInt(id)).select();
-    
+    const projectToDelete = await database('projects')
+      .where('id', parseInt(id))
+      .select();
+
     if (!projectToDelete.length) {
-      return res.status(404).json(`No project found with the id of ${projectId}.`);
+      return res
+        .status(404)
+        .json(`No project found with the id of ${projectId}.`);
     }
     await database('palettes')
       .where('project_id', id)
@@ -177,11 +210,15 @@ app.delete('/api/v1/projects/:id', async (req, res) => {
     await database('projects')
       .where({ id })
       .del();
-    res.status(202).json('Project successfully deleted')
+    res.status(202).json('Project successfully deleted');
   } catch (error) {
-    res.status(500).json(`Oh no, something bad happened and I could not delete the project: ${error}`)
+    res
+      .status(500)
+      .json(
+        `Oh no, something bad happened and I could not delete the project: ${error}`
+      );
   }
-})
+});
 
 // delete palette
 app.delete('/api/v1/palettes/:id', async (req, res) => {
@@ -199,4 +236,3 @@ app.delete('/api/v1/palettes/:id', async (req, res) => {
 });
 
 module.exports = app;
-

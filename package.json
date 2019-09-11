@@ -28,6 +28,7 @@
   "dependencies": {
     "body-parser": "^1.17.1",
     "cors": "^2.8.5",
+    "dotenv": "^8.1.0",
     "express": "^4.15.2",
     "jest": "^24.8.0",
     "knex": "^0.16.5",

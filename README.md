@@ -1,5 +1,7 @@
 # palette-picker-api  
 
+View the front end app (currently under construction!) at https://dab-of-colors.web.app/
+
 
 ## Setup
 

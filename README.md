@@ -1,4 +1,4 @@
-# palette-picker-api  
+# Dab of Colors : Back End
 
 View the front end app (currently under construction!) at https://dab-of-colors.web.app/
 

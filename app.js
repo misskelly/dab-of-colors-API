@@ -194,22 +194,35 @@ app.patch('/api/v1/projects/:id', async (req, res) => {
 // edit palette
 // '/api/v1/palettes/:id'
 app.patch('/api/v1/palettes/:id', async (req, res) => {
+  const modifiedPalette = req.body;
+  for (let reqParam of [
+    'name',
+    'color_1',
+    'color_2',
+    'color_3',
+    'color_4',
+    'color_5'
+  ]) {
+    if (!modifiedPalette[reqParam])
+      return res.status(422).json({
+        error: `expected format {name: <String>, color_1: <String>, color_2: <String>, color_3: <String>, color_4: <String>, color_5: <String>} \n You are missing ${reqParam}`
+      });
+  }
   try {
     const { id } = req.params;
-    const { name } = req.body;
-    if (!name) return res.status(422).json('Please provide a name.');
     const matchingPalettes = await database('palettes').where({ id });
     if (!matchingPalettes.length)
-      return res.status(404).json('Palette not found.');
+      return res.status(404).json(`Bummer, no palette found with id ${id}`);
     await database('palettes')
       .where({ id })
-      .update({ name });
-    res.status(202).json('Palette updated successfully');
+      .update({ ...modifiedPalette });
+    return res.status(202).json(`Palette successfully updated`);
   } catch (error) {
+    console.log(error);
     res
       .status(500)
       .json(
-        `Oh no, something bad happened and I could not get the projects: ${error}`
+        `Oh no, something bad happened and I could not get the palettes: ${error}`
       );
   }
 });

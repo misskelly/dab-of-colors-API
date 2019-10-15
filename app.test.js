@@ -170,11 +170,11 @@ describe('Server', () => {
       const { id: project_id } = await database('projects').first();
       mockPalette = {
         name: 'Mock Palette',
-        color_1: '#FFFFF',
-        color_2: '#FFFFF',
-        color_3: '#FFFFF',
-        color_4: '#FFFFF',
-        color_5: '#FFFFF',
+        color_1: '#FFFFFF',
+        color_2: '#FFFFFF',
+        color_3: '#FFFFFF',
+        color_4: '#FFFFFF',
+        color_5: '#FFFFFF',
         project_id
       };
     });
@@ -212,18 +212,36 @@ describe('Server', () => {
       const { id } = await database('palettes').first();
       const response = await request(app)
         .patch(`/api/v1/palettes/${id}`)
-        .send({ name: 'Updated Project' });
+        .send({
+          name: 'Updated Palette',
+          color_1: '#13293D',
+          color_2: '#006494',
+          color_3: '#247BA0',
+          color_4: '#1B98E0',
+          color_5: '#E8F1F2'
+        });
       expect(response.status).toEqual(202);
     });
 
     it('should edit the name of a palette in the database', async () => {
-      const expected = await database('palettes').first();
-      expect(expected.name).not.toEqual('Updated Project');
-      await request(app)
-        .patch(`/api/v1/palettes/${expected.id}`)
-        .send({ name: 'Updated Project' });
-      const [result] = await database('palettes').where({ id: expected.id });
-      expect(result.name).toEqual('Updated Project');
+      const existingPalette = await database('palettes').first();
+      const id = existingPalette.id;
+      const updatedPalette = {
+        name: 'Updated Palette',
+        color_1: '#13293D',
+        color_2: '#006494',
+        color_3: '#247BA0',
+        color_4: '#1B98E0',
+        color_5: '#E8F1F2'
+      };
+
+      const response = await request(app)
+        .patch(`/api/v1/palettes/${id}`)
+        .send(updatedPalette);
+      const palette = await database('palettes').where('id', id);
+      console.log(response, palette);
+
+      expect(palette[0].name).toEqual(updatedPalette.name);
     });
 
     it('should return 422 if the name param is not sent', async () => {

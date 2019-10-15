@@ -218,7 +218,6 @@ app.patch('/api/v1/palettes/:id', async (req, res) => {
       .update({ ...modifiedPalette });
     return res.status(202).json(`Palette successfully updated`);
   } catch (error) {
-    console.log(error);
     res
       .status(500)
       .json(

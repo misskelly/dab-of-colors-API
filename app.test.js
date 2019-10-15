@@ -124,8 +124,6 @@ describe('Server', () => {
         'project_id',
         projectToDelete.id
       );
-      console.log(updatedProjects);
-      console.log(updatedPalettes);
 
       expect(response.status).toBe(202);
       expect(updatedProjects.length).toBe(1);
@@ -183,7 +181,6 @@ describe('Server', () => {
       const response = await request(app)
         .post('/api/v1/palettes')
         .send(mockPalette);
-      console.log(response.body);
       expect(response.status).toEqual(201);
       expect(response.body).toHaveProperty('id');
     });
@@ -239,7 +236,6 @@ describe('Server', () => {
         .patch(`/api/v1/palettes/${id}`)
         .send(updatedPalette);
       const palette = await database('palettes').where('id', id);
-      console.log(response, palette);
 
       expect(palette[0].name).toEqual(updatedPalette.name);
     });

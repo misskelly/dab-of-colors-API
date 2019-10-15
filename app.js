@@ -129,7 +129,6 @@ app.post('/api/v1/palettes', async (req, res) => {
     const palette = req.body;
     const required = [
       'name',
-      'project_id',
       'color_1',
       'color_2',
       'color_3',
@@ -194,21 +193,28 @@ app.patch('/api/v1/projects/:id', async (req, res) => {
 // edit palette
 // '/api/v1/palettes/:id'
 app.patch('/api/v1/palettes/:id', async (req, res) => {
-  const modifiedPalette = req.body;
-  for (let reqParam of [
-    'name',
-    'color_1',
-    'color_2',
-    'color_3',
-    'color_4',
-    'color_5'
-  ]) {
-    if (!modifiedPalette[reqParam])
-      return res.status(422).json({
-        error: `expected format {name: <String>, color_1: <String>, color_2: <String>, color_3: <String>, color_4: <String>, color_5: <String>} \n You are missing ${reqParam}`
-      });
-  }
   try {
+    const modifiedPalette = req.body;
+    for (let param of [
+      'name',
+      'color_1',
+      'color_2',
+      'color_3',
+      'color_4',
+      'color_5'
+    ]) {
+      if (!modifiedPalette[param])
+        return res.status(422).json({
+          error: `Expected format {
+        name: <String>,
+        color_1: <Valid Hex #>,
+        color_2: <Valid Hex #>,
+        color_3: <Valid Hex #>,
+        color_4: <Valid Hex #>,
+        color_5: <Valid Hex #>,
+      }, Missing ${param}`
+        });
+    }
     const { id } = req.params;
     const matchingPalettes = await database('palettes').where({ id });
     if (!matchingPalettes.length)
@@ -225,7 +231,6 @@ app.patch('/api/v1/palettes/:id', async (req, res) => {
       );
   }
 });
-// we need to add the option to update colors
 
 // DELETE
 

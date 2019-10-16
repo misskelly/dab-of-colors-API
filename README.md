@@ -40,7 +40,6 @@ To start the server, run:
 ```bash
 npm start
 ```
-# API-Palette-Picker
 
 ## API Documentation:
 

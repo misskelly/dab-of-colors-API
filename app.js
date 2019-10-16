@@ -177,7 +177,9 @@ app.patch('/api/v1/projects/:id', async (req, res) => {
         .status(404)
         .json(`Uh oh, could not find project with id: ${id}.`);
     if (!name)
-      return res.status(422).json('Required format: { name: <String> }');
+      return res
+        .status(422)
+        .json({ error: 'Required format: { name: <String> }' });
     await database('projects')
       .where({ id })
       .update({ name });
@@ -219,7 +221,7 @@ app.patch('/api/v1/palettes/:id', async (req, res) => {
     const { id } = req.params;
     const matchingPalettes = await database('palettes').where({ id });
     if (!matchingPalettes.length)
-      return res.status(404).json(`Bummer, no palette found with id ${id}`);
+      return res.status(404).json(`Bummer, no palette found with id: ${id}`);
     await database('palettes')
       .where({ id })
       .update({ ...modifiedPalette });
@@ -240,7 +242,7 @@ app.delete('/api/v1/projects/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const projectToDelete = await database('projects')
-      .where('id', parseInt(id))
+      .where({ id })
       .select();
     if (!projectToDelete.length) {
       return res.status(404).json(`No project found with the id of ${id}.`);
@@ -269,7 +271,7 @@ app.delete('/api/v1/palettes/:id', async (req, res) => {
     if (!matchingPalettes.length)
       return res
         .status(404)
-        .json({ error: `Aw snap. Palette ${id} doesn\'t seem to exist` });
+        .json({ error: `Aw snap. Palette ${id} does not seem to exist` });
     await database('palettes')
       .where({ id })
       .del();

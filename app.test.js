@@ -253,7 +253,7 @@ describe('Server', () => {
     it('should return 204 if a palette matches the id', async () => {
       const { id } = await database('palettes').first();
       const response = await request(app).delete(`/api/v1/palettes/${id}`);
-      expect(response.status).toEqual(204);
+      expect(response.status).toEqual(202);
     });
 
     it('should remove a palette from the database', async () => {

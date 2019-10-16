@@ -242,7 +242,6 @@ app.delete('/api/v1/projects/:id', async (req, res) => {
     const projectToDelete = await database('projects')
       .where('id', parseInt(id))
       .select();
-
     if (!projectToDelete.length) {
       return res.status(404).json(`No project found with the id of ${id}.`);
     }

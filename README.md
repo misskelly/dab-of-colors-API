@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/misskelly/palette-picker-api.svg?branch=master)](https://travis-ci.org/misskelly/palette-picker-api)
+[![Build Status](https://travis-ci.org/misskelly/dab-of-colors-API.svg?branch=master)](https://travis-ci.org/misskelly/dab-of-colors-API)
+
 
 # Dab of Colors : Back End
 

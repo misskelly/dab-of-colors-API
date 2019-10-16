@@ -12,7 +12,9 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.get('/', (request, response) => {
-  response.send("Let's get some random color palettes!");
+  response.send(
+    "Welcome to the Dab of Colors API! Let's save some unicorns! Checkout the docs at https://github.com/misskelly/dab-of-colors-API."
+  );
 });
 
 // GET
@@ -23,6 +25,10 @@ app.get('/api/v1/projects', async (req, res) => {
   try {
     const projects = await database('projects').select('id', 'name');
     res.status(200).json(projects);
+    if (!palettes.length)
+      return res
+        .status(404)
+        .json({ error: 'Uhhhh there do not seem to be any projects here.' });
   } catch (error) {
     res
       .status(500)
@@ -39,7 +45,9 @@ app.get('/api/v1/projects/:id', async (req, res) => {
   try {
     const project = await database('projects').where({ id });
     if (!project.length) {
-      return res.status(404).json(`Sorry, no project found with id ${id}.`);
+      return res
+        .status(404)
+        .json({ error: `Aw snap. Project ${id} does not seem to exist.` });
     }
     res.status(200).json({
       id: project[0].id,
@@ -58,22 +66,21 @@ app.get('/api/v1/projects/:id', async (req, res) => {
 // /api/v1/palettes
 app.get('/api/v1/palettes', async (req, res) => {
   try {
-    const { name } = req.query;
-    if (req.query.name) {
-      database('palettes')
-        .where('name', name)
-        .then(palette => {
-          if (palette) {
-            return res.status(200).json(palette);
-          } else {
-            return res.status(404).json('Palettes Not Found');
-          }
-        });
-    } else {
-      const palettes = await database('palettes').select();
-      if (!palettes.length) return res.status(404).json('Palettes Not Found');
-      res.status(200).json(palettes);
-    }
+    const palettes = await database('palettes').select(
+      'id',
+      'name',
+      'color_1',
+      'color_2',
+      'color_3',
+      'color_4',
+      'color_5',
+      'project_id'
+    );
+    if (!palettes.length)
+      return res
+        .status(404)
+        .json('Uhhhh there do not seem to be any palettes here.');
+    res.status(200).json(palettes);
   } catch (error) {
     res
       .status(500)
@@ -89,14 +96,13 @@ app.get('/api/v1/palettes/:id', async (req, res) => {
   const id = parseInt(req.params.id);
   try {
     const foundPalette = await database('palettes').where({ id });
-    if (!foundPalette.length) return res.status(404).json('Palette Not Found');
+    if (!foundPalette.length)
+      return res
+        .status(404)
+        .json({ error: `Aw snap. Palette ${id} does not seem to exist.` });
     res.status(200).json(foundPalette[0]);
   } catch (error) {
-    res
-      .status(500)
-      .json(
-        `Oh no, something bad happened and I could not find that palette: ${error}`
-      );
+    res.status(500).json(`Oh no, something bad happened: ${error}`);
   }
 });
 
@@ -175,7 +181,7 @@ app.patch('/api/v1/projects/:id', async (req, res) => {
     if (!matchingProjects.length)
       return res
         .status(404)
-        .json(`Uh oh, could not find project with id: ${id}.`);
+        .json({ error: `Aw snap. Project ${id} does not seem to exist.` });
     if (!name)
       return res
         .status(422)
@@ -183,7 +189,7 @@ app.patch('/api/v1/projects/:id', async (req, res) => {
     await database('projects')
       .where({ id })
       .update({ name });
-    res.status(202).json('Successfully edited that project name');
+    res.status(202).json('Successfully edited that project name!');
   } catch (error) {
     res
       .status(500)
@@ -221,11 +227,13 @@ app.patch('/api/v1/palettes/:id', async (req, res) => {
     const { id } = req.params;
     const matchingPalettes = await database('palettes').where({ id });
     if (!matchingPalettes.length)
-      return res.status(404).json(`Bummer, no palette found with id: ${id}`);
+      return res
+        .status(404)
+        .json({ error: `Aw snap. Palette ${id} does not seem to exist.` });
     await database('palettes')
       .where({ id })
       .update({ ...modifiedPalette });
-    return res.status(202).json(`Palette successfully updated`);
+    return res.status(202).json(`Palette ${id} successfully updated!`);
   } catch (error) {
     res
       .status(500)
@@ -245,7 +253,9 @@ app.delete('/api/v1/projects/:id', async (req, res) => {
       .where({ id })
       .select();
     if (!projectToDelete.length) {
-      return res.status(404).json(`No project found with the id of ${id}.`);
+      return res
+        .status(404)
+        .json({ error: `Aw snap. Project ${id} does not seem to exist.` });
     }
     await database('palettes')
       .where('project_id', id)
@@ -253,7 +263,7 @@ app.delete('/api/v1/projects/:id', async (req, res) => {
     await database('projects')
       .where({ id })
       .del();
-    res.status(202).json('Project successfully deleted');
+    res.status(202).json('Project successfully deleted!');
   } catch (error) {
     res
       .status(500)
@@ -271,15 +281,15 @@ app.delete('/api/v1/palettes/:id', async (req, res) => {
     if (!matchingPalettes.length)
       return res
         .status(404)
-        .json({ error: `Aw snap. Palette ${id} does not seem to exist` });
+        .json({ error: `Aw snap. Palette ${id} does not seem to exist.` });
     await database('palettes')
       .where({ id })
       .del();
-    return res.status(202).json(`Successfully deleted palette ${id}`);
+    return res.status(202).json(`Successfully deleted palette ${id}!`);
   } catch (error) {
     return res
       .status(500)
-      .json({ error: `Aw snap. Could not delete palette ${id}` });
+      .json({ error: `Aw snap. Could not delete palette ${id}!` });
   }
 });
 

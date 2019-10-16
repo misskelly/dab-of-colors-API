@@ -24,11 +24,11 @@ app.get('/', (request, response) => {
 app.get('/api/v1/projects', async (req, res) => {
   try {
     const projects = await database('projects').select('id', 'name');
-    res.status(200).json(projects);
-    if (!palettes.length)
+    if (!projects.length)
       return res
         .status(404)
         .json({ error: 'Uhhhh there do not seem to be any projects here.' });
+    res.status(200).json(projects);
   } catch (error) {
     res
       .status(500)
